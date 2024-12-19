@@ -9,7 +9,6 @@ int main() {
     if (n <= 0) {
         cout << "Please enter a positive integer." << endl;
     } else {
-        // Using the formula: Sum = n * (n + 1) / 2
         int sum = n * (n + 1) / 2;
         cout << "The sum of the first " << n << " natural numbers is: " << sum << endl;
     }
