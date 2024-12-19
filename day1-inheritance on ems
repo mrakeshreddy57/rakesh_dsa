@@ -1,0 +1,96 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+// Base Class: Employee
+class Employee {
+protected:
+    string name;
+    int id;
+    double basicSalary;
+
+public:
+    Employee(string empName, int empId, double salary)
+        : name(empName), id(empId), basicSalary(salary) {}
+
+    virtual void displayDetails() const {
+        cout << "Employee ID: " << id << endl;
+        cout << "Name: " << name << endl;
+        cout << "Basic Salary: " << basicSalary << endl;
+    }
+
+    virtual double calculateSalary() const {
+        return basicSalary; // Base salary for all employees
+    }
+
+    virtual ~Employee() {} // Virtual destructor
+};
+
+// Derived Class: Manager
+class Manager : public Employee {
+private:
+    double bonus;
+
+public:
+    Manager(string empName, int empId, double salary, double managerBonus)
+        : Employee(empName, empId, salary), bonus(managerBonus) {}
+
+    double calculateSalary() const override {
+        return basicSalary + bonus; // Manager's salary includes a bonus
+    }
+
+    void displayDetails() const override {
+        cout << "Manager Details:" << endl;
+        Employee::displayDetails();
+        cout << "Bonus: " << bonus << endl;
+        cout << "Total Salary: " << calculateSalary() << endl;
+    }
+};
+
+// Derived Class: Developer
+class Developer : public Employee {
+private:
+    int projectsCompleted;
+    double projectBonusRate; // Bonus per project
+
+public:
+    Developer(string empName, int empId, double salary, int projects, double rate)
+        : Employee(empName, empId, salary), projectsCompleted(projects), projectBonusRate(rate) {}
+
+    double calculateSalary() const override {
+        return basicSalary + (projectsCompleted * projectBonusRate);
+    }
+
+    void displayDetails() const override {
+        cout << "Developer Details:" << endl;
+        Employee::displayDetails();
+        cout << "Projects Completed: " << projectsCompleted << endl;
+        cout << "Project Bonus Rate: " << projectBonusRate << endl;
+        cout << "Total Salary: " << calculateSalary() << endl;
+    }
+};
+
+// Main Function
+int main() {
+    // Manager Object
+    Manager manager("Alice", 101, 50000, 10000);
+    manager.displayDetails();
+    cout << endl;
+
+    // Developer Object
+    Developer developer("Bob", 102, 40000, 5, 2000);
+    developer.displayDetails();
+    cout << endl;
+
+    // Demonstrating polymorphism with a base class pointer
+    Employee* emp;
+
+    emp = &manager;
+    emp->displayDetails();
+    cout << endl;
+
+    emp = &developer;
+    emp->displayDetails();
+
+    return 0;
+}
