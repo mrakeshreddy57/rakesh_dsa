@@ -1,0 +1,106 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+// Base class: BankAccount
+class BankAccount {
+protected:
+    string accountHolder;
+    double balance;
+
+public:
+    BankAccount(string name, double initialBalance)
+        : accountHolder(name), balance(initialBalance) {}
+
+    virtual void deposit(double amount) {
+        balance += amount;
+        cout << "Deposited " << amount << " into " << accountHolder << "'s account." << endl;
+    }
+
+    virtual void withdraw(double amount) {
+        if (amount <= balance) {
+            balance -= amount;
+            cout << "Withdrew " << amount << " from " << accountHolder << "'s account." << endl;
+        } else {
+            cout << "Insufficient balance!" << endl;
+        }
+    }
+
+    virtual void displayBalance() const {
+        cout << accountHolder << "'s account balance: " << balance << endl;
+    }
+
+    // Virtual destructor
+    virtual ~BankAccount() {}
+};
+
+// Derived class: SavingsAccount
+class SavingsAccount : public BankAccount {
+private:
+    double interestRate; // Interest rate in percentage
+
+public:
+    SavingsAccount(string name, double initialBalance, double rate)
+        : BankAccount(name, initialBalance), interestRate(rate) {}
+
+    void addInterest() {
+        double interest = (balance * interestRate) / 100;
+        balance += interest;
+        cout << "Added interest of " << interest << " to " << accountHolder << "'s account." << endl;
+    }
+
+    void displayBalance() const override {
+        cout << "Savings ";
+        BankAccount::displayBalance();
+    }
+};
+
+// Derived class: CurrentAccount
+class CurrentAccount : public BankAccount {
+private:
+    double overdraftLimit;
+
+public:
+    CurrentAccount(string name, double initialBalance, double limit)
+        : BankAccount(name, initialBalance), overdraftLimit(limit) {}
+
+    void withdraw(double amount) override {
+        if (amount <= balance + overdraftLimit) {
+            balance -= amount;
+            cout << "Withdrew " << amount << " from " << accountHolder << "'s account using overdraft." << endl;
+        } else {
+            cout << "Overdraft limit exceeded!" << endl;
+        }
+    }
+
+    void displayBalance() const override {
+        cout << "Current ";
+        BankAccount::displayBalance();
+    }
+};
+
+int main() {
+    // Base class pointer pointing to derived class objects
+    BankAccount* account;
+
+    // Savings Account
+    SavingsAccount savings("Alice", 5000, 5);
+    account = &savings;
+    account->deposit(2000);
+    account->withdraw(1000);
+    savings.addInterest(); // Specific to SavingsAccount
+    account->displayBalance();
+
+    cout << endl;
+
+    // Current Account
+    CurrentAccount current("Bob", 3000, 2000);
+    account = &current;
+    account->deposit(1000);
+    account->withdraw(4000);
+    account->withdraw(2000); // Overdraft limit check
+    account->displayBalance();
+
+    return 0;
+}
+
